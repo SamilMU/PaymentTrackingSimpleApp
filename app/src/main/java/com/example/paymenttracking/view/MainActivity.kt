@@ -63,7 +63,6 @@ class MainActivity : AppCompatActivity() {
     fun cardClickEvent(paymentTypeArg: PaymentTypeEntity){
         val intent = Intent(this, DetailActivity::class.java)
         intent.putExtra("paymentTypeObject",paymentTypeArg)
-        PaymentTypeLogic.getSpecificPaymentType(this,paymentTypeArg.Id)
         startActivity(intent)
     }
 
