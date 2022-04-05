@@ -12,6 +12,7 @@ import com.example.paymenttracking.bll.PaymentTypeLogic
 import com.example.paymenttracking.model.PaymentTypeEntity
 import com.example.paymenttracking.view.listing.paymentTypes.PaymentTypeAdapter
 import com.example.paymenttracking.databinding.ActivityMainBinding
+import com.example.paymenttracking.model.TypePeriods
 import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
@@ -157,17 +158,20 @@ class MainActivity : AppCompatActivity() {
     private fun createInitTypes() {
             val paymentType1 = PaymentTypeEntity().apply {
                 title = "Elektrik Faturası"
-                period = "Aylık"
+//                period = "Aylık"
                 timeOfPeriod = 15
+                period = TypePeriods.Aylik
             }
             val paymentType2 = PaymentTypeEntity().apply {
                 title = "Su Faturası"
-                period = "Yıllık"
+//                period = "Yıllık"
                 timeOfPeriod = 180
+                period = TypePeriods.Yillik
             }
             val paymentType3 = PaymentTypeEntity().apply {
                 title = "Doğalgaz Faturası"
-                period = "Aylık"
+//                period = "Haftalık"
+                period = TypePeriods.Haftalik
             }
             val paymentType4 = PaymentTypeEntity().apply {
                 title = "İnternet Faturası"

@@ -98,11 +98,11 @@ class DetailActivity : AppCompatActivity() {
     /** View update */
     override fun onResume() {
         binding.tvDetailTitle.text = paymentTypeObject.title.uppercase()
-        if (!paymentTypeObject.period.isNullOrEmpty()){
+        if (paymentTypeObject.period != null){
             if(paymentTypeObject.timeOfPeriod != null && paymentTypeObject.timeOfPeriod != 0){
-                binding.tvDetailSummary.text = "${paymentTypeObject.period}, ${paymentTypeObject.timeOfPeriod}.günü ödeniyor."
+                binding.tvDetailSummary.text = "${paymentTypeObject.period!!.str}, ${paymentTypeObject.timeOfPeriod}.günü ödeniyor."
             }else{
-                binding.tvDetailSummary.text = "${paymentTypeObject.period} olarak ödeniyor."
+                binding.tvDetailSummary.text = "${paymentTypeObject.period!!.str} olarak ödeniyor."
             }
         }else{
             binding.tvDetailSummary.text = "Bu tipin düzenli bir ödeme planı yok."

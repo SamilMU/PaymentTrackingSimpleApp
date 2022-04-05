@@ -36,12 +36,12 @@ class PaymentTypeViewHolder(
         paymentObject = paymentTypeArg
         tvtitle.text = paymentTypeArg.title
 
-        if (paymentTypeArg.period.isNullOrEmpty()) {
+        if (paymentTypeArg.period == null) {
             tvperiod.text = "Ödeme planı yok."
         } else if (paymentTypeArg.timeOfPeriod == null || paymentTypeArg.timeOfPeriod == 0) {
-            tvperiod.text = "${paymentTypeArg.period}"
+            tvperiod.text = "${paymentTypeArg.period!!.str}"
         } else {
-            tvperiod.text = "${paymentTypeArg.period}, ${paymentTypeArg.timeOfPeriod}.günü"
+            tvperiod.text = "${paymentTypeArg.period!!.str}, ${paymentTypeArg.timeOfPeriod}.günü"
         }
 
 
