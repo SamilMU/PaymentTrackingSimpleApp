@@ -2,11 +2,13 @@ package com.example.paymenttracking.model
 
 import java.io.Serializable
 
-class PaymentEntity(var date : String = "",
-                    var amount: Double = 0.0) : Serializable{
+class PaymentEntity() : Serializable{
 
-    var Id = 0
+    var date : String = ""
+    var amount: Double = 0.0
+    var id = 0
 //            by Delegates.notNull<Int>()
 
+    // Foreign Key
     lateinit var owner: PaymentTypeEntity
 }

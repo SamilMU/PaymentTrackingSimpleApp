@@ -9,22 +9,22 @@ import com.example.paymenttracking.R
 
 class PaymentTypeViewHolder(
     itemView: View,
-    var cardClick: (paymentTypeEntity: PaymentTypeEntity) -> Unit,
-    var paymentClick: (paymentTypeEntity: PaymentTypeEntity) -> Unit
+    private var cardClick: (paymentTypeEntity: PaymentTypeEntity) -> Unit,
+    private var paymentClick: (paymentTypeEntity: PaymentTypeEntity) -> Unit
 ) : RecyclerView.ViewHolder(itemView) {
 
     /** Define View Elements */
-    var tv_title: TextView
-    var tv_period: TextView
-    var btn_add_payment: AppCompatButton
+    private var tvtitle: TextView
+    private var tvperiod: TextView
+    private var btnaddpayment: AppCompatButton
 
     // Shared object 2 be sent to cardClick
     lateinit var paymentObject: PaymentTypeEntity
 
     init {
-        tv_title = itemView.findViewById(R.id.tv_title_typecard)
-        tv_period = itemView.findViewById(R.id.tv_period_typecard)
-        btn_add_payment = itemView.findViewById(R.id.btn_addpayment_typecard)
+        tvtitle = itemView.findViewById(R.id.tv_title_typecard)
+        tvperiod = itemView.findViewById(R.id.tv_period_typecard)
+        btnaddpayment = itemView.findViewById(R.id.btn_addpayment_typecard)
 
         itemView.setOnClickListener {
             cardClick(paymentObject)
@@ -34,18 +34,18 @@ class PaymentTypeViewHolder(
 
     fun bindData(paymentTypeArg: PaymentTypeEntity) {
         paymentObject = paymentTypeArg
-        tv_title.text = paymentTypeArg.title
+        tvtitle.text = paymentTypeArg.title
 
         if (paymentTypeArg.period.isNullOrEmpty()) {
-            tv_period.text = "Ödeme planı yok."
+            tvperiod.text = "Ödeme planı yok."
         } else if (paymentTypeArg.timeOfPeriod == null || paymentTypeArg.timeOfPeriod == 0) {
-            tv_period.text = "${paymentTypeArg.period}"
+            tvperiod.text = "${paymentTypeArg.period}"
         } else {
-            tv_period.text = "${paymentTypeArg.period}, ${paymentTypeArg.timeOfPeriod}.günü"
+            tvperiod.text = "${paymentTypeArg.period}, ${paymentTypeArg.timeOfPeriod}.günü"
         }
 
 
-        btn_add_payment.setOnClickListener {
+        btnaddpayment.setOnClickListener {
             paymentClick(paymentTypeArg)
         }
 

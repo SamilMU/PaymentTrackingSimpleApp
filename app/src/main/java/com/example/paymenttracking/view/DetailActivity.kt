@@ -20,10 +20,10 @@ class DetailActivity : AppCompatActivity() {
 
 
     /** Shared Objects*/
-    lateinit var adap : PaymentAdapter
-    var paymentList = ArrayList<PaymentEntity>()
+    private lateinit var adap : PaymentAdapter
+    private var paymentList = ArrayList<PaymentEntity>()
 
-    var paymentTypeObject = PaymentTypeEntity()
+    private var paymentTypeObject = PaymentTypeEntity()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +34,7 @@ class DetailActivity : AppCompatActivity() {
     }
 
     /** Views*/
-    fun setActivityView(){
+    private fun setActivityView(){
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -45,14 +45,14 @@ class DetailActivity : AppCompatActivity() {
     }
 
     /** Setting adapter to RV */
-    fun setAdapter2RV(){
+    private fun setAdapter2RV(){
         paymentList = PaymentLogic.getSpesificPayments(this,paymentTypeObject)
         adap = PaymentAdapter(this,paymentList, ::clickEvent)
         binding.rvDetail.adapter = adap
     }
 
     /** Click Listeners */
-    fun clickListeners(){
+    private fun clickListeners(){
         binding.btnDetailAddPayment.setOnClickListener {
             val intent = Intent(this, PaymentAdditionActivity::class.java)
             intent.putExtra("paymentTypeObject", paymentTypeObject)
@@ -68,17 +68,17 @@ class DetailActivity : AppCompatActivity() {
     }
 
     /** Click event for RV Cards */
-    fun clickEvent(paymentArg : PaymentEntity){
+    private fun clickEvent(paymentArg : PaymentEntity){
         val adb = AlertDialog.Builder(this)
 
         adb.setTitle("Ödeme Silme")
         adb.setMessage("Seçilen ${paymentArg.date} tarihli ${paymentArg.amount} tutarındaki ödemeyi silmek istediğinize emin misiniz?")
 
-        adb.setPositiveButton("Evet",DialogInterface.OnClickListener { dialogInterface, i ->
-            PaymentLogic.deletePayment(this,paymentArg.Id)
+        adb.setPositiveButton("Evet",DialogInterface.OnClickListener { _, _ ->
+            PaymentLogic.deletePayment(this,paymentArg.id)
             setAdapter2RV()
         })
-        adb.setNegativeButton("Hayır", DialogInterface.OnClickListener { dialogInterface, i ->
+        adb.setNegativeButton("Hayır", DialogInterface.OnClickListener { _, _ ->
             Toast.makeText(this,"Silme iptal edildi", Toast.LENGTH_SHORT).show()
         })
 
@@ -87,7 +87,7 @@ class DetailActivity : AppCompatActivity() {
     }
 
     /** Result Launchers */
-    val editTypeRL = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+    private val editTypeRL = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         result ->
             if(result.resultCode == RESULT_OK){
                 paymentTypeObject = result.data!!.getSerializableExtra("paymentTypeObject") as PaymentTypeEntity

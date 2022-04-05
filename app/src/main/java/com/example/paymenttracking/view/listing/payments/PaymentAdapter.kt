@@ -7,9 +7,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.paymenttracking.model.PaymentEntity
 import com.example.paymenttracking.R
 
-class PaymentAdapter(var context: Context,
-                     var paymentList: ArrayList<PaymentEntity>,
-                     var itemClick: (paymentArg : PaymentEntity) -> Unit)
+class PaymentAdapter(
+                     var context: Context,
+                     private var paymentList: ArrayList<PaymentEntity>,
+                     private var itemClick: (paymentArg : PaymentEntity) -> Unit)
     : RecyclerView.Adapter<PaymentViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PaymentViewHolder {
@@ -18,7 +19,7 @@ class PaymentAdapter(var context: Context,
     }
 
     override fun onBindViewHolder(holder: PaymentViewHolder, position: Int) {
-        holder.bindData(paymentList.get(position))
+        holder.bindData(paymentList[position])
     }
 
     override fun getItemCount(): Int {

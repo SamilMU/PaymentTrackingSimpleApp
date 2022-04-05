@@ -49,9 +49,9 @@ class PaymentOperation(context: Context) {
         // Go to specified row/record. Returns false if non-existent
         if (c.moveToFirst()){
             do{
-                paymentTypeObject = PaymentTypeEntity("",null,null)
+                paymentTypeObject = PaymentTypeEntity()
                 // Get data from 0th column of selected row(outer).
-                paymentTypeObject.Id = c.getInt(0)
+                paymentTypeObject.id = c.getInt(0)
                 // Preferred method over getting data from index. Indexes may shift.
                 paymentTypeObject.title = c.getString(c.getColumnIndex(titleStr))
                 paymentTypeObject.period = c.getString(c.getColumnIndex(periodStr))
@@ -75,6 +75,7 @@ class PaymentOperation(context: Context) {
     }
 
     // Get One Payment Type
+/*
     @SuppressLint("Range")
     fun getSpecificPaymentType(paymentTypeId : Int){
         val paymentTypeObject : PaymentTypeEntity
@@ -83,7 +84,7 @@ class PaymentOperation(context: Context) {
         val dbObject = paymentDB!!.rawQuery("SELECT * FROM $typeTableStr WHERE Id = $paymentTypeId", null)
 
         if(dbObject.moveToFirst()) {
-            paymentTypeObject = PaymentTypeEntity("", null, null)
+            paymentTypeObject = PaymentTypeEntity()
             // Get data from 0th column of selected row(outer).
             paymentTypeObject.Id = dbObject.getInt(0)
             // Preferred method over getting data from index. Indexes may shift.
@@ -91,9 +92,9 @@ class PaymentOperation(context: Context) {
             paymentTypeObject.period = dbObject.getString(dbObject.getColumnIndex(periodStr))
             paymentTypeObject.timeOfPeriod = dbObject.getInt(3)
         }
-        // TODO Send an error or something when not found.
         closeDB()
     }
+*/
 
     // Add Type
     fun addPaymentType(paymentTypeArg: PaymentTypeEntity) : Boolean{
@@ -120,7 +121,7 @@ class PaymentOperation(context: Context) {
         cv.put(timeOfPeriodStr, paymentTypeArg.timeOfPeriod)
 
         openDB()
-        paymentDB!!.update(typeTableStr, cv, "Id = ?", arrayOf(paymentTypeArg.Id.toString()))
+        paymentDB!!.update(typeTableStr, cv, "Id = ?", arrayOf(paymentTypeArg.id.toString()))
         closeDB()
 
         // Check rowCount return
@@ -151,7 +152,7 @@ class PaymentOperation(context: Context) {
         val cv = ContentValues()
         cv.put(dateStr , paymentArg.date)
         cv.put(amountStr, paymentArg.amount)
-        cv.put(ownerStr, paymentArg.owner.Id)
+        cv.put(ownerStr, paymentArg.owner.id)
 
         openDB()
         val effectedRowCount = paymentDB!!.insert(paymentTableStr, null, cv)
@@ -190,20 +191,20 @@ class PaymentOperation(context: Context) {
         var paymentObject : PaymentEntity
 
         openDB()
-        val dbObject = paymentDB!!.rawQuery("SELECT * FROM $paymentTableStr WHERE Owner = ${paymentTypeArg.Id}", null)
+        val dbObject = paymentDB!!.rawQuery("SELECT * FROM $paymentTableStr WHERE Owner = ${paymentTypeArg.id}", null)
 
         if(dbObject.moveToFirst()){
             do {
-                paymentObject = PaymentEntity("", 0.0)
+                paymentObject = PaymentEntity()
                 // Get data from 0th column of selected row(outer).
-                paymentObject.Id = dbObject.getInt(0)
+                paymentObject.id = dbObject.getInt(0)
                 // Preferred method over getting data from index. Indexes may shift.
                 paymentObject.date = dbObject.getString(dbObject.getColumnIndex(dateStr))
                 paymentObject.amount = dbObject.getDouble(dbObject.getColumnIndex(amountStr))
                 paymentList4Return.add(paymentObject)
             }while (dbObject.moveToNext())
-
         }
+        dbObject.close()
         closeDB()
 
         return paymentList4Return

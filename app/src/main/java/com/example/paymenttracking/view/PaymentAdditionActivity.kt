@@ -18,7 +18,7 @@ class PaymentAdditionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPaymentAdditionBinding
 
     /** Shared Variables */
-    lateinit var paymentTypeObj : PaymentTypeEntity
+    private lateinit var paymentTypeObj : PaymentTypeEntity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,19 +28,19 @@ class PaymentAdditionActivity : AppCompatActivity() {
     }
 
     /** Views*/
-    fun setActivityView(){
+    private fun setActivityView(){
         binding = ActivityPaymentAdditionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         paymentTypeObj = intent.getSerializableExtra("paymentTypeObject") as PaymentTypeEntity
         binding.tvToolbarAddpayment.text = paymentTypeObj.title.uppercase()
         val dateList = calenderFunc()
-        binding.btnDateAddpayment.text = "${dateList.get(0)}.${dateList.get(1)+1}.${dateList.get(2)}"
+        binding.btnDateAddpayment.text = "${dateList[0]}.${dateList[1] +1}.${dateList[2]}"
 
     }
 
     /** Click Listeners */
-    fun clickListeners(){
+    private fun clickListeners(){
         // Date Button
         binding.btnDateAddpayment.setOnClickListener {
             customDatePicker(calenderFunc())
@@ -54,7 +54,10 @@ class PaymentAdditionActivity : AppCompatActivity() {
                         .show()
                 }
                 else{
-                    val newPayment = PaymentEntity(binding.btnDateAddpayment.text.toString(),binding.etAmountAddpayment.text.toString().toDouble())
+                    val newPayment = PaymentEntity().apply {
+                        date = binding.btnDateAddpayment.text.toString()
+                        amount = binding.etAmountAddpayment.text.toString().toDouble()
+                    }
                     newPayment.owner = paymentTypeObj
 
                     val intent = Intent()
@@ -70,7 +73,7 @@ class PaymentAdditionActivity : AppCompatActivity() {
     }
 
     /** Func to get current date */
-    fun calenderFunc() : ArrayList<Int> {
+    private fun calenderFunc() : ArrayList<Int> {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
@@ -79,11 +82,11 @@ class PaymentAdditionActivity : AppCompatActivity() {
     }
 
     /** Date picker */
-    fun customDatePicker(dateList : ArrayList<Int>){
+    private fun customDatePicker(dateList : ArrayList<Int>){
 
-        val dp = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { datePicker, i, i2, i3 ->
-            binding.btnDateAddpayment.text = "$i3.${i2+1}.$i"
-        }, dateList.get(2), dateList.get(1), dateList.get(0))
+        val dp = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { _, year, month, dom ->
+            binding.btnDateAddpayment.text = "$dom.${month+1}.$year"
+        }, dateList[2], dateList[1], dateList[0])
 
         dp.datePicker.maxDate = System.currentTimeMillis()
         dp.setButton(DialogInterface.BUTTON_POSITIVE, "Seç", dp)

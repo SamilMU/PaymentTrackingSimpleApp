@@ -8,15 +8,15 @@ import com.example.paymenttracking.R
 
 class PaymentViewHolder(itemView : View, var itemClick: (paymentArg : PaymentEntity) -> Unit) : RecyclerView.ViewHolder(itemView) {
 
-    var sharedPaymentObj = PaymentEntity()
+    private var sharedPaymentObj = PaymentEntity()
     /** Define View Elements*/
-    val tv_date : TextView
-    val tv_amount : TextView
+    private val tvdate : TextView
+    private val tvamount : TextView
 
 
     init {
-        tv_date = itemView.findViewById(R.id.tv_date_paymentcard)
-        tv_amount = itemView.findViewById(R.id.tv_amount_paymentcard)
+        tvdate = itemView.findViewById(R.id.tv_date_paymentcard)
+        tvamount = itemView.findViewById(R.id.tv_amount_paymentcard)
 
         itemView.setOnClickListener {
             itemClick(sharedPaymentObj)
@@ -25,7 +25,7 @@ class PaymentViewHolder(itemView : View, var itemClick: (paymentArg : PaymentEnt
 
     fun bindData(paymentArg : PaymentEntity){
         sharedPaymentObj = paymentArg
-        tv_date.text = paymentArg.date
-        tv_amount.text = paymentArg.amount.toString()
+        tvdate.text = paymentArg.date
+        tvamount.text = paymentArg.amount.toString()
     }
 }
