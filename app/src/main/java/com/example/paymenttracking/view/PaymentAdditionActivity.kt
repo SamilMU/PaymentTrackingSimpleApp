@@ -10,6 +10,7 @@ import com.example.paymenttracking.bll.PaymentLogic
 import com.example.paymenttracking.model.PaymentEntity
 import com.example.paymenttracking.model.PaymentTypeEntity
 import com.example.paymenttracking.databinding.ActivityPaymentAdditionBinding
+import com.google.android.material.snackbar.Snackbar
 import java.lang.NumberFormatException
 import java.util.*
 
@@ -61,9 +62,13 @@ class PaymentAdditionActivity : AppCompatActivity() {
                     newPayment.owner = paymentTypeObj
 
                     val intent = Intent()
-                    PaymentLogic.addPayment(this,newPayment)
-                    setResult(RESULT_OK,intent)
-                    finish()
+                    val resultDB = PaymentLogic.addPayment(this,newPayment)
+                    if(resultDB){
+                        setResult(RESULT_OK,intent)
+                        finish()
+                    }else{
+                        Toast.makeText(this,"Ödemeyi eklerken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }catch (e : NumberFormatException){
                 Toast.makeText(this,"Girilen ödeme miktarı hatalıdır!", Toast.LENGTH_SHORT).show()

@@ -30,6 +30,11 @@ class TypeAdditionActivity : AppCompatActivity() {
     private var isEditing = false
     private var receivedPaymentTypeObjId = 0
 
+    /** Strings */
+    private val gunlukStr = "Günlük"
+    private val haftalikStr = "Haftalık"
+    private val aylikStr = "Aylık"
+    private val yillikStr = "Yıllık"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +79,10 @@ class TypeAdditionActivity : AppCompatActivity() {
                     // If a period is not selected
                     if (selectedSpinnerItem == "") {
                         newPaymentType.period = null
-                    } else {
+                    }else if(selectedSpinnerItem == gunlukStr){
+                        newPaymentType.timeOfPeriod = 0
+                    }
+                    else {
                         // Null check for timeOfPeriod,
                         if (binding.etTimeofAddtype.text.toString() != "" && !binding.etTimeofAddtype.text.toString().equals(null)
                         ) {
@@ -151,7 +159,7 @@ class TypeAdditionActivity : AppCompatActivity() {
 
     /** Populate spinner with fixed periods */
     private fun populateSpinner() {
-        val periodList: ArrayList<String> = arrayListOf("", "Yıllık", "Aylık", "Haftalık", "Günlük")
+        val periodList: ArrayList<String> = arrayListOf("", yillikStr, aylikStr, haftalikStr, gunlukStr)
 
         adap = ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, periodList)
 
@@ -170,19 +178,19 @@ class TypeAdditionActivity : AppCompatActivity() {
                         }
                         1 -> {
                             maxDaysAllowed = 365
-                            selectedSpinnerItem = "Yıllık"
+                            selectedSpinnerItem = yillikStr
                         }
                         2 -> {
                             maxDaysAllowed = 31
-                            selectedSpinnerItem = "Aylık"
+                            selectedSpinnerItem = aylikStr
                         }
                         3 -> {
                             maxDaysAllowed = 7
-                            selectedSpinnerItem = "Haftalık"
+                            selectedSpinnerItem = haftalikStr
                         }
                         4 -> {
                             timeOfPeriodVisibility(false)
-                            selectedSpinnerItem = "Günlük"
+                            selectedSpinnerItem = gunlukStr
                         }
                     }
                     warningCheck()
@@ -217,7 +225,7 @@ class TypeAdditionActivity : AppCompatActivity() {
 
         var inputInt = 0
         // Input Date in Int
-        if (binding.etTimeofAddtype.text.toString() != "" && !binding.etTimeofAddtype.text.toString().equals(null)
+        if (binding.etTimeofAddtype.text.toString() !=   "" && !binding.etTimeofAddtype.text.toString().equals(null)
         ) {
             inputInt = binding.etTimeofAddtype.text.toString().toInt()
         }
@@ -260,10 +268,10 @@ class TypeAdditionActivity : AppCompatActivity() {
             if (!tempPaymentTypeObject.period.isNullOrEmpty()) {
                 // Set Period
                 when (tempPaymentTypeObject.period!!.lowercase()) {
-                    "yıllık" -> binding.spinnerAddtype.setSelection(1)
-                    "aylık" -> binding.spinnerAddtype.setSelection(2)
-                    "haftalık" -> binding.spinnerAddtype.setSelection(3)
-                    "günlük" -> binding.spinnerAddtype.setSelection(4)
+                    yillikStr.lowercase() -> binding.spinnerAddtype.setSelection(1)
+                    aylikStr.lowercase() -> binding.spinnerAddtype.setSelection(2)
+                    haftalikStr.lowercase() -> binding.spinnerAddtype.setSelection(3)
+                    gunlukStr.lowercase() -> binding.spinnerAddtype.setSelection(4)
                 }
                 // Set Time Of Period
                 if (tempPaymentTypeObject.timeOfPeriod != null && tempPaymentTypeObject.timeOfPeriod != 0) {

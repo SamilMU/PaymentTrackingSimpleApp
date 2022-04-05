@@ -9,17 +9,20 @@ class PaymentTypeLogic {
 
     companion object{
 
-        fun addPaymentType(context: Context, paymentTypeArg: PaymentTypeEntity) : Boolean {
+        fun addPaymentType(context: Context, paymentTypeArg: PaymentTypeEntity, notiToast: Boolean = true) : Boolean {
             val paymentOperation = PaymentOperation(context)
             return paymentOperation.addPaymentType(paymentTypeArg).also {
-                Toast.makeText(context, "Yeni tip eklendi.", Toast.LENGTH_SHORT).show()
+                if(it)
+                    if (notiToast)
+                            Toast.makeText(context, "Yeni tip eklendi.", Toast.LENGTH_SHORT).show()
             }
         }
 
         fun updatePaymentType(context: Context, paymentTypeArg: PaymentTypeEntity) : Boolean{
             val paymentOperation = PaymentOperation(context)
             return paymentOperation.updateType(paymentTypeArg).also {
-                Toast.makeText(context, "Tip güncellendi", Toast.LENGTH_SHORT).show()
+                if(it)
+                    Toast.makeText(context, "Tip güncellendi", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -30,12 +33,17 @@ class PaymentTypeLogic {
 
         fun clearTable(context: Context) : Boolean{
             val paymentOperation = PaymentOperation(context)
-            return paymentOperation.clearTypeTable()
+            paymentOperation.clearTypeTable()
+            return paymentOperation.getAllPaymentTypes().isNullOrEmpty()
         }
 
-        fun deleteType(context: Context, paymentTypeId: Int) : Boolean{
+        fun deleteType(context: Context, paymentTypeId: Int, notiToast: Boolean = true) : Boolean{
             val paymentOperation = PaymentOperation(context)
-            return paymentOperation.deleteType(paymentTypeId)
+            return paymentOperation.deleteType(paymentTypeId).also {
+                if(it)
+                    if (notiToast)
+                        Toast.makeText(context, "Ödeme tipi silindi.", Toast.LENGTH_SHORT).show()
+            }
         }
 
          /*It is better to transfer local object rather than get it from DB every time a Detail

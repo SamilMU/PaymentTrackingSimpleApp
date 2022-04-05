@@ -106,11 +106,7 @@ class PaymentOperation(context: Context) {
         val effectedRowCount = paymentDB!!.insert(typeTableStr, null, cv)
         closeDB()
 
-        // TODO Return count to give a Toast.
-        if(effectedRowCount != -1L){
-            return false
-        }
-        return true
+        return effectedRowCount>0
     }
 
     // Update Type
@@ -121,11 +117,10 @@ class PaymentOperation(context: Context) {
         cv.put(timeOfPeriodStr, paymentTypeArg.timeOfPeriod)
 
         openDB()
-        paymentDB!!.update(typeTableStr, cv, "Id = ?", arrayOf(paymentTypeArg.id.toString()))
+        val effectedRowCount = paymentDB!!.update(typeTableStr, cv, "Id = ?", arrayOf(paymentTypeArg.id.toString()))
         closeDB()
 
-        // Check rowCount return
-        return true
+        return effectedRowCount>0
     }
 
     // Delete Type
@@ -138,12 +133,10 @@ class PaymentOperation(context: Context) {
     }
 
     // Clear Type Table
-    fun clearTypeTable() : Boolean{
+    fun clearTypeTable(){
         openDB()
         paymentDB!!.execSQL("delete from $typeTableStr")
         closeDB()
-
-        return false
     }
 
     /** Payment Functions */
@@ -158,11 +151,7 @@ class PaymentOperation(context: Context) {
         val effectedRowCount = paymentDB!!.insert(paymentTableStr, null, cv)
         closeDB()
 
-        // TODO Return count to give a Toast.
-        if(effectedRowCount != -1L){
-            return false
-        }
-        return true
+        return effectedRowCount>0
     }
 
     // Delete Payment
@@ -172,9 +161,7 @@ class PaymentOperation(context: Context) {
         val effectedRowCount = paymentDB!!.delete(paymentTableStr,"Id = ?",arrayOf(paymentId.toString()))
         closeDB()
 
-        print(effectedRowCount.toString())
-        // Check rowCount return
-        return true
+        return effectedRowCount>0
     }
 
     // Clear Payment Table
@@ -192,6 +179,33 @@ class PaymentOperation(context: Context) {
 
         openDB()
         val dbObject = paymentDB!!.rawQuery("SELECT * FROM $paymentTableStr WHERE Owner = ${paymentTypeArg.id}", null)
+
+        if(dbObject.moveToFirst()){
+            do {
+                paymentObject = PaymentEntity()
+                // Get data from 0th column of selected row(outer).
+                paymentObject.id = dbObject.getInt(0)
+                // Preferred method over getting data from index. Indexes may shift.
+                paymentObject.date = dbObject.getString(dbObject.getColumnIndex(dateStr))
+                paymentObject.amount = dbObject.getDouble(dbObject.getColumnIndex(amountStr))
+                paymentList4Return.add(paymentObject)
+            }while (dbObject.moveToNext())
+        }
+        dbObject.close()
+        closeDB()
+
+        return paymentList4Return
+    }
+
+    // Get All Payments
+    // Get Payments of One Type
+    @SuppressLint("Range")
+    fun getAllPayments() : ArrayList<PaymentEntity> {
+        val paymentList4Return : ArrayList<PaymentEntity> = arrayListOf()
+        var paymentObject : PaymentEntity
+
+        openDB()
+        val dbObject = paymentDB!!.rawQuery("SELECT * FROM $paymentTableStr", null)
 
         if(dbObject.moveToFirst()){
             do {
