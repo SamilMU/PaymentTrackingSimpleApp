@@ -59,7 +59,7 @@ class PaymentAdditionActivity : AppCompatActivity() {
                         date = binding.btnDateAddpayment.text.toString()
                         amount = binding.etAmountAddpayment.text.toString().toDouble()
                     }
-                    newPayment.owner = paymentTypeObj
+                    newPayment.ownerId = paymentTypeObj.id
 
                     val intent = Intent()
                     val resultDB = PaymentLogic.addPayment(this,newPayment)

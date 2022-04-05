@@ -74,27 +74,26 @@ class PaymentOperation(context: Context) {
         return paymentDB!!.rawQuery(query, null)
     }
 
-    // Get One Payment Type
-/*
+    // Get One Payment Type -- Mainly for debugging purposes
     @SuppressLint("Range")
-    fun getSpecificPaymentType(paymentTypeId : Int){
-        val paymentTypeObject : PaymentTypeEntity
+    fun getSpecificPaymentType(paymentTypeId : Int) : PaymentTypeEntity{
+        val paymentTypeObject = PaymentTypeEntity()
 
         openDB()
         val dbObject = paymentDB!!.rawQuery("SELECT * FROM $typeTableStr WHERE Id = $paymentTypeId", null)
 
         if(dbObject.moveToFirst()) {
-            paymentTypeObject = PaymentTypeEntity()
             // Get data from 0th column of selected row(outer).
-            paymentTypeObject.Id = dbObject.getInt(0)
+            paymentTypeObject.id = dbObject.getInt(0)
             // Preferred method over getting data from index. Indexes may shift.
             paymentTypeObject.title = dbObject.getString(dbObject.getColumnIndex(titleStr))
             paymentTypeObject.period = dbObject.getString(dbObject.getColumnIndex(periodStr))
             paymentTypeObject.timeOfPeriod = dbObject.getInt(3)
         }
         closeDB()
+
+        return paymentTypeObject
     }
-*/
 
     // Add Type
     fun addPaymentType(paymentTypeArg: PaymentTypeEntity) : Boolean{
@@ -145,7 +144,7 @@ class PaymentOperation(context: Context) {
         val cv = ContentValues()
         cv.put(dateStr , paymentArg.date)
         cv.put(amountStr, paymentArg.amount)
-        cv.put(ownerStr, paymentArg.owner.id)
+        cv.put(ownerStr, paymentArg.ownerId)
 
         openDB()
         val effectedRowCount = paymentDB!!.insert(paymentTableStr, null, cv)
@@ -188,6 +187,7 @@ class PaymentOperation(context: Context) {
                 // Preferred method over getting data from index. Indexes may shift.
                 paymentObject.date = dbObject.getString(dbObject.getColumnIndex(dateStr))
                 paymentObject.amount = dbObject.getDouble(dbObject.getColumnIndex(amountStr))
+                paymentObject.ownerId = dbObject.getInt(dbObject.getColumnIndex(ownerStr))
                 paymentList4Return.add(paymentObject)
             }while (dbObject.moveToNext())
         }
@@ -197,8 +197,7 @@ class PaymentOperation(context: Context) {
         return paymentList4Return
     }
 
-    // Get All Payments
-    // Get Payments of One Type
+    // Get All Payments - Generally for debugging purposes
     @SuppressLint("Range")
     fun getAllPayments() : ArrayList<PaymentEntity> {
         val paymentList4Return : ArrayList<PaymentEntity> = arrayListOf()
@@ -215,6 +214,7 @@ class PaymentOperation(context: Context) {
                 // Preferred method over getting data from index. Indexes may shift.
                 paymentObject.date = dbObject.getString(dbObject.getColumnIndex(dateStr))
                 paymentObject.amount = dbObject.getDouble(dbObject.getColumnIndex(amountStr))
+                paymentObject.ownerId = dbObject.getInt(dbObject.getColumnIndex(ownerStr))
                 paymentList4Return.add(paymentObject)
             }while (dbObject.moveToNext())
         }

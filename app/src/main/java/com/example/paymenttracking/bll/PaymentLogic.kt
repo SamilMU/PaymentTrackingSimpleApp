@@ -30,5 +30,9 @@ class PaymentLogic {
             val paymentOperation = PaymentOperation(context)
             return paymentOperation.getSpecificPayments(paymentTypeArg)
         }
+        fun getAllPayments(context: Context) : ArrayList<PaymentEntity>{
+            val paymentOperation = PaymentOperation(context)
+            return paymentOperation.getAllPayments()
+        }
     }
 }

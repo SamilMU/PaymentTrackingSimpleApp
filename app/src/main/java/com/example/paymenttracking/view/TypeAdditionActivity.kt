@@ -8,11 +8,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.example.paymenttracking.bll.PaymentLogic
 import com.example.paymenttracking.bll.PaymentTypeLogic
 import com.example.paymenttracking.model.PaymentTypeEntity
 import com.example.paymenttracking.databinding.ActivityTypeAdditionBinding
@@ -28,7 +30,7 @@ class TypeAdditionActivity : AppCompatActivity() {
     private var maxDaysAllowed = 0
     private var selectedSpinnerItem = ""
     private var isEditing = false
-    private var receivedPaymentTypeObjId = 0
+    private var receivedPaymentTypeObj = PaymentTypeEntity()
 
     /** Strings */
     private val gunlukStr = "Günlük"
@@ -93,7 +95,7 @@ class TypeAdditionActivity : AppCompatActivity() {
                     // Update or new addition check
                     val dbFuncResult : Boolean
                     if (isEditing) {
-                        newPaymentType.id = receivedPaymentTypeObjId
+                        newPaymentType.id = receivedPaymentTypeObj.id
                         dbFuncResult = PaymentTypeLogic.updatePaymentType(this, newPaymentType)
                     }else{
                         dbFuncResult = PaymentTypeLogic.addPaymentType(this, newPaymentType)
@@ -129,7 +131,15 @@ class TypeAdditionActivity : AppCompatActivity() {
 
             adb.setPositiveButton("Evet", DialogInterface.OnClickListener { _, _ ->
 
-                val isDeleted = PaymentTypeLogic.deleteType(this, receivedPaymentTypeObjId)
+
+                // First delete all payments of type.
+                val paymentListOfType = PaymentLogic.getSpesificPayments(this,receivedPaymentTypeObj)
+                paymentListOfType.forEach {
+                    PaymentLogic.deletePayment(this,it.id)
+                }
+
+                // Delete Type
+                val isDeleted = PaymentTypeLogic.deleteType(this, receivedPaymentTypeObj.id)
 
                 if (isDeleted) {
                     Toast.makeText(
@@ -257,25 +267,24 @@ class TypeAdditionActivity : AppCompatActivity() {
             binding.btnDeleteAddtype.visibility = View.VISIBLE
             isEditing = true
 
-            val tempPaymentTypeObject =
+            receivedPaymentTypeObj =
                 intent.getSerializableExtra("paymentTypeObject") as PaymentTypeEntity
 
-            receivedPaymentTypeObjId = tempPaymentTypeObject.id
 
             // Set Title
-            binding.etTitleAddtype.setText(tempPaymentTypeObject.title)
+            binding.etTitleAddtype.setText(receivedPaymentTypeObj.title)
 
-            if (!tempPaymentTypeObject.period.isNullOrEmpty()) {
+            if (!receivedPaymentTypeObj.period.isNullOrEmpty()) {
                 // Set Period
-                when (tempPaymentTypeObject.period!!.lowercase()) {
+                when (receivedPaymentTypeObj.period!!.lowercase()) {
                     yillikStr.lowercase() -> binding.spinnerAddtype.setSelection(1)
                     aylikStr.lowercase() -> binding.spinnerAddtype.setSelection(2)
                     haftalikStr.lowercase() -> binding.spinnerAddtype.setSelection(3)
                     gunlukStr.lowercase() -> binding.spinnerAddtype.setSelection(4)
                 }
                 // Set Time Of Period
-                if (tempPaymentTypeObject.timeOfPeriod != null && tempPaymentTypeObject.timeOfPeriod != 0) {
-                    binding.etTimeofAddtype.setText(tempPaymentTypeObject.timeOfPeriod.toString())
+                if (receivedPaymentTypeObj.timeOfPeriod != null && receivedPaymentTypeObj.timeOfPeriod != 0) {
+                    binding.etTimeofAddtype.setText(receivedPaymentTypeObj.timeOfPeriod.toString())
                 }
             }
         }

@@ -10,5 +10,5 @@ class PaymentEntity() : Serializable{
 //            by Delegates.notNull<Int>()
 
     // Foreign Key
-    lateinit var owner: PaymentTypeEntity
+    var ownerId: Int = 0
 }
