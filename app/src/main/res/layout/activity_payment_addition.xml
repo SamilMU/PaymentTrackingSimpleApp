@@ -67,6 +67,7 @@
         android:ems="10"
         android:inputType="numberDecimal"
         android:digits="0123456789."
+        android:maxLength="12"
         app:layout_constraintBottom_toBottomOf="@+id/textView4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView4"

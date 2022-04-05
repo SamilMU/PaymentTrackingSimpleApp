@@ -104,8 +104,10 @@ class PaymentOperation(context: Context) {
     fun addPaymentType(paymentTypeArg: PaymentTypeEntity) : Boolean{
         val cv = ContentValues()
         cv.put(titleStr,paymentTypeArg.title)
-        cv.put(periodStr, paymentTypeArg.period!!.str)
-        cv.put(timeOfPeriodStr, paymentTypeArg.timeOfPeriod)
+        if(paymentTypeArg.period != null){
+            cv.put(periodStr, paymentTypeArg.period!!.str)
+            cv.put(timeOfPeriodStr, paymentTypeArg.timeOfPeriod)
+        }
         openDB()
         val effectedRowCount = paymentDB!!.insert(typeTableStr, null, cv)
         closeDB()
