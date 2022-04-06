@@ -82,18 +82,20 @@ class TypeAdditionActivity : AppCompatActivity() {
                     // If a period is not selected
                     if (selectedSpinnerItem == "") {
                         newPaymentType.period = null
-                    }else if(selectedSpinnerItem == gunlukStr){
+                    } // Not Suitable for a TimeOfPeriod input.
+                    else if(selectedSpinnerItem == gunlukStr){
                         newPaymentType.timeOfPeriod = 0
                     }
                     else {
-                        // Null check for timeOfPeriod,
+                        // Suitable for timeOfPeriod input. Null check for timeOfPeriod,
                         if (binding.etTimeofAddtype.text.toString() != "" && !binding.etTimeofAddtype.text.toString().equals(null)
                         ) {
                             newPaymentType.timeOfPeriod =
                                 binding.etTimeofAddtype.text.toString().toInt()
                         }
                     }
-                    // Update or new addition check
+
+                    // Check if updating existing or creating a new type
                     val dbFuncResult : Boolean
                     if (isEditing) {
                         newPaymentType.id = receivedPaymentTypeObj.id

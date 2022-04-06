@@ -77,29 +77,6 @@ class PaymentOperation(context: Context) {
         return paymentDB!!.rawQuery(query, null)
     }
 
-    // Get One Payment Type -- Mainly for debugging purposes
-    @SuppressLint("Range")
-    fun getSpecificPaymentType(paymentTypeId : Int) : PaymentTypeEntity{
-        val paymentTypeObject = PaymentTypeEntity()
-
-        openDB()
-        val dbObject = paymentDB!!.rawQuery("SELECT * FROM $typeTableStr WHERE Id = $paymentTypeId", null)
-
-        if(dbObject.moveToFirst()) {
-            // Get data from 0th column of selected row(outer).
-            paymentTypeObject.id = dbObject.getInt(0)
-            // Preferred method over getting data from index. Indexes may shift.
-            paymentTypeObject.title = dbObject.getString(dbObject.getColumnIndex(titleStr))
-            val tempStr = dbObject.getString(dbObject.getColumnIndex(periodStr))
-            paymentTypeObject.period = TypePeriods.getPaymentTypeByStr(tempStr)
-            paymentTypeObject.timeOfPeriod = dbObject.getInt(3)
-        }
-        dbObject.close()
-        closeDB()
-
-        return paymentTypeObject
-    }
-
     // Add Type
     fun addPaymentType(paymentTypeArg: PaymentTypeEntity) : Boolean{
         val cv = ContentValues()
@@ -204,7 +181,7 @@ class PaymentOperation(context: Context) {
         return paymentList4Return
     }
 
-    // Get All Payments - Generally for debugging purposes
+    // Get All Payments
     @SuppressLint("Range")
     fun getAllPayments() : ArrayList<PaymentEntity> {
         val paymentList4Return : ArrayList<PaymentEntity> = arrayListOf()
