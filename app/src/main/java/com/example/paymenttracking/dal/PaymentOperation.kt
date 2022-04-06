@@ -7,6 +7,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.example.paymenttracking.model.PaymentEntity
 import com.example.paymenttracking.model.PaymentTypeEntity
+import com.example.paymenttracking.model.TypePeriods
 
 class PaymentOperation(context: Context) {
     private var paymentDB : SQLiteDatabase? = null
@@ -54,13 +55,15 @@ class PaymentOperation(context: Context) {
                 paymentTypeObject.id = c.getInt(0)
                 // Preferred method over getting data from index. Indexes may shift.
                 paymentTypeObject.title = c.getString(c.getColumnIndex(titleStr))
-                paymentTypeObject.period = c.getString(c.getColumnIndex(periodStr))
+                // There are null checks in viewLayer, it is ok to send "null"/null
+                val tempStr = c.getString(c.getColumnIndex(periodStr))
+                paymentTypeObject.period = TypePeriods.getPaymentTypeByStr(tempStr)
                 paymentTypeObject.timeOfPeriod = c.getInt(3)
                 typeList.add(paymentTypeObject)
             }while (c.moveToNext())
 
         }
-
+        c.close()
         closeDB()
 
         return typeList
@@ -87,9 +90,11 @@ class PaymentOperation(context: Context) {
             paymentTypeObject.id = dbObject.getInt(0)
             // Preferred method over getting data from index. Indexes may shift.
             paymentTypeObject.title = dbObject.getString(dbObject.getColumnIndex(titleStr))
-            paymentTypeObject.period = dbObject.getString(dbObject.getColumnIndex(periodStr))
+            val tempStr = dbObject.getString(dbObject.getColumnIndex(periodStr))
+            paymentTypeObject.period = TypePeriods.getPaymentTypeByStr(tempStr)
             paymentTypeObject.timeOfPeriod = dbObject.getInt(3)
         }
+        dbObject.close()
         closeDB()
 
         return paymentTypeObject
@@ -99,8 +104,10 @@ class PaymentOperation(context: Context) {
     fun addPaymentType(paymentTypeArg: PaymentTypeEntity) : Boolean{
         val cv = ContentValues()
         cv.put(titleStr,paymentTypeArg.title)
-        cv.put(periodStr, paymentTypeArg.period)
-        cv.put(timeOfPeriodStr, paymentTypeArg.timeOfPeriod)
+        if(paymentTypeArg.period != null){
+            cv.put(periodStr, paymentTypeArg.period!!.str)
+            cv.put(timeOfPeriodStr, paymentTypeArg.timeOfPeriod)
+        }
         openDB()
         val effectedRowCount = paymentDB!!.insert(typeTableStr, null, cv)
         closeDB()
@@ -112,7 +119,7 @@ class PaymentOperation(context: Context) {
     fun updateType(paymentTypeArg: PaymentTypeEntity) : Boolean{
         val cv = ContentValues()
         cv.put(titleStr,paymentTypeArg.title)
-        cv.put(periodStr, paymentTypeArg.period)
+        cv.put(periodStr, paymentTypeArg.period!!.str)
         cv.put(timeOfPeriodStr, paymentTypeArg.timeOfPeriod)
 
         openDB()

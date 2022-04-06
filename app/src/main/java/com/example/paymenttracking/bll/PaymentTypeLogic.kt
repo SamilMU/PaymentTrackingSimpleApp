@@ -48,9 +48,9 @@ class PaymentTypeLogic {
 
 //         It is better to transfer local object rather than get it from DB every time a Detail
 //         page is requested. 2B Used in case of need
-        fun getSpecificPaymentType(context: Context, paymentTypeId : Int) : PaymentTypeEntity {
+/*        fun getSpecificPaymentType(context: Context, paymentTypeId : Int) : PaymentTypeEntity {
             val paymentOperation = PaymentOperation(context)
             return paymentOperation.getSpecificPaymentType(paymentTypeId)
-        }
+        }*/
     }
 }

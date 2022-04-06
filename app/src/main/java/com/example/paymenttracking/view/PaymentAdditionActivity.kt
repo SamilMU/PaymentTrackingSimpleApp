@@ -1,5 +1,6 @@
 package com.example.paymenttracking.view
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.DialogInterface
 import android.content.Intent
@@ -10,7 +11,6 @@ import com.example.paymenttracking.bll.PaymentLogic
 import com.example.paymenttracking.model.PaymentEntity
 import com.example.paymenttracking.model.PaymentTypeEntity
 import com.example.paymenttracking.databinding.ActivityPaymentAdditionBinding
-import com.google.android.material.snackbar.Snackbar
 import java.lang.NumberFormatException
 import java.util.*
 
@@ -29,6 +29,7 @@ class PaymentAdditionActivity : AppCompatActivity() {
     }
 
     /** Views*/
+    @SuppressLint("SetTextI18n")
     private fun setActivityView(){
         binding = ActivityPaymentAdditionBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -87,6 +88,7 @@ class PaymentAdditionActivity : AppCompatActivity() {
     }
 
     /** Date picker */
+    @SuppressLint("SetTextI18n")
     private fun customDatePicker(dateList : ArrayList<Int>){
 
         val dp = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { _, year, month, dom ->

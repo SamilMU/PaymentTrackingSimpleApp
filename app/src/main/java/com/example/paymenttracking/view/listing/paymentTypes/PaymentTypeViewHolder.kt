@@ -1,5 +1,6 @@
 package com.example.paymenttracking.view.listing.paymentTypes
 
+import android.annotation.SuppressLint
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
@@ -32,16 +33,17 @@ class PaymentTypeViewHolder(
 
     }
 
+    @SuppressLint("SetTextI18n")
     fun bindData(paymentTypeArg: PaymentTypeEntity) {
         paymentObject = paymentTypeArg
         tvtitle.text = paymentTypeArg.title
 
-        if (paymentTypeArg.period.isNullOrEmpty()) {
+        if (paymentTypeArg.period == null) {
             tvperiod.text = "Ödeme planı yok."
         } else if (paymentTypeArg.timeOfPeriod == null || paymentTypeArg.timeOfPeriod == 0) {
-            tvperiod.text = "${paymentTypeArg.period}"
+            tvperiod.text = paymentTypeArg.period!!.str
         } else {
-            tvperiod.text = "${paymentTypeArg.period}, ${paymentTypeArg.timeOfPeriod}.günü"
+            tvperiod.text = "${paymentTypeArg.period!!.str}, ${paymentTypeArg.timeOfPeriod}.günü"
         }
 
 

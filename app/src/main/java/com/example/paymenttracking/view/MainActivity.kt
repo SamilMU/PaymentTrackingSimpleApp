@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,6 +13,7 @@ import com.example.paymenttracking.bll.PaymentTypeLogic
 import com.example.paymenttracking.model.PaymentTypeEntity
 import com.example.paymenttracking.view.listing.paymentTypes.PaymentTypeAdapter
 import com.example.paymenttracking.databinding.ActivityMainBinding
+import com.example.paymenttracking.model.TypePeriods
 import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
@@ -65,8 +67,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnClearMain.setOnClickListener {
-            PaymentTypeLogic.clearTable(this)
-            PaymentLogic.clearPayments(this)
+            var resultDB = PaymentTypeLogic.clearTable(this)
+            if(resultDB) resultDB = PaymentLogic.clearPayments(this)
+            dbErrorCheck(resultDB,true)
             defaultTypeIdList = arrayListOf()
             binding.switchMain.isChecked = false
             setAdapter2RV()
@@ -83,7 +86,8 @@ class MainActivity : AppCompatActivity() {
                 editor.putBoolean("switchChecked",true)
                 var localCounter = 0
                 // Saving added default types to sharedPref and local list.
-                paymentTypeList.takeLast(4).forEach {
+                // takeLast should be equal to the number of items added.
+                paymentTypeList.takeLast(5).forEach {
                     // Local id list of default types.
                     defaultTypeIdList.add(it.id)
                     // Shared pref id list of default types.
@@ -157,17 +161,21 @@ class MainActivity : AppCompatActivity() {
     private fun createInitTypes() {
             val paymentType1 = PaymentTypeEntity().apply {
                 title = "Elektrik Faturası"
-                period = "Aylık"
                 timeOfPeriod = 15
+                period = TypePeriods.Aylik
             }
             val paymentType2 = PaymentTypeEntity().apply {
                 title = "Su Faturası"
-                period = "Yıllık"
                 timeOfPeriod = 180
+                period = TypePeriods.Yillik
             }
             val paymentType3 = PaymentTypeEntity().apply {
                 title = "Doğalgaz Faturası"
-                period = "Aylık"
+                period = TypePeriods.Haftalik
+            }
+            val paymentType5 = PaymentTypeEntity().apply {
+                title = "Mutfak Giderleri"
+                period = TypePeriods.Gunluk
             }
             val paymentType4 = PaymentTypeEntity().apply {
                 title = "İnternet Faturası"
@@ -176,6 +184,7 @@ class MainActivity : AppCompatActivity() {
             PaymentTypeLogic.addPaymentType(this, paymentType2,false)
             PaymentTypeLogic.addPaymentType(this, paymentType3,false)
             PaymentTypeLogic.addPaymentType(this, paymentType4,false)
+            PaymentTypeLogic.addPaymentType(this, paymentType5,false)
     }
 
     override fun onResume() {
@@ -195,5 +204,16 @@ class MainActivity : AppCompatActivity() {
         }
         adb.setNegativeButton("Hayır", null)
         adb.show()
+    }
+
+    /** DB Error Warning*/
+    fun dbErrorCheck(result: Boolean, showPositive: Boolean){
+        if(result && showPositive){
+            Toast.makeText(this,"İşlem başarıyla gerçekleştirildi.", Toast.LENGTH_SHORT).show()
+        }else if(!result){
+            Toast.makeText(this,
+                "İşlemi gerçekleştirirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz",
+                Toast.LENGTH_SHORT).show()
+        }
     }
 }

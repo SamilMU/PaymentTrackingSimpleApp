@@ -1,5 +1,6 @@
 package com.example.paymenttracking.view
 
+import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -8,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -18,6 +18,7 @@ import com.example.paymenttracking.bll.PaymentLogic
 import com.example.paymenttracking.bll.PaymentTypeLogic
 import com.example.paymenttracking.model.PaymentTypeEntity
 import com.example.paymenttracking.databinding.ActivityTypeAdditionBinding
+import com.example.paymenttracking.model.TypePeriods
 import kotlin.collections.ArrayList
 
 class TypeAdditionActivity : AppCompatActivity() {
@@ -74,7 +75,7 @@ class TypeAdditionActivity : AppCompatActivity() {
                 } else {
                     val newPaymentType = PaymentTypeEntity().apply {
                         title = binding.etTitleAddtype.text.toString()
-                        period = selectedSpinnerItem
+                        period = TypePeriods.getPaymentTypeByStr(selectedSpinnerItem)
                         timeOfPeriod = 0
                     }
 
@@ -230,6 +231,7 @@ class TypeAdditionActivity : AppCompatActivity() {
     }
 
     /** Warn user if input date is not suitable.*/
+    @SuppressLint("SetTextI18n")
     fun warningCheck() {
         binding.tvWarningAddtype.visibility = View.GONE
 
@@ -274,9 +276,9 @@ class TypeAdditionActivity : AppCompatActivity() {
             // Set Title
             binding.etTitleAddtype.setText(receivedPaymentTypeObj.title)
 
-            if (!receivedPaymentTypeObj.period.isNullOrEmpty()) {
+            if (receivedPaymentTypeObj.period != null) {
                 // Set Period
-                when (receivedPaymentTypeObj.period!!.lowercase()) {
+                when (receivedPaymentTypeObj.period!!.str.lowercase()) {
                     yillikStr.lowercase() -> binding.spinnerAddtype.setSelection(1)
                     aylikStr.lowercase() -> binding.spinnerAddtype.setSelection(2)
                     haftalikStr.lowercase() -> binding.spinnerAddtype.setSelection(3)
