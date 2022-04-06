@@ -8,6 +8,5 @@ class PaymentTypeEntity : Serializable {
     var timeOfPeriod : Int? = null
     var id : Int = 0
     var period: TypePeriods? = null
-//            by Delegates.notNull<Int>()
 
 }

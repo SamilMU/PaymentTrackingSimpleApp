@@ -3,7 +3,6 @@ package com.example.paymenttracking.view
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -13,7 +12,6 @@ import com.example.paymenttracking.bll.PaymentTypeLogic
 import com.example.paymenttracking.model.PaymentTypeEntity
 import com.example.paymenttracking.view.listing.paymentTypes.PaymentTypeAdapter
 import com.example.paymenttracking.databinding.ActivityMainBinding
-import com.example.paymenttracking.model.TypePeriods
 import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
@@ -27,6 +25,9 @@ class MainActivity : AppCompatActivity() {
 
     private var paymentTypeObject = PaymentTypeEntity()
     private var defaultTypeIdList = ArrayList<Int>()
+
+    private val paymentTypeLogic = PaymentTypeLogic()
+    private var initTypeCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,44 +77,16 @@ class MainActivity : AppCompatActivity() {
         }
         // Default Type Switch
         binding.switchMain.setOnCheckedChangeListener { _, b ->
+            // SharedPref init
+            val pref = getSharedPreferences(packageName, MODE_PRIVATE)
+            val editor = pref.edit()
             if(b){
                 createInitTypes()
                 setAdapter2RV()
-                // SharedPref init
-                val pref = getSharedPreferences(packageName, MODE_PRIVATE)
-                val editor = pref.edit()
-                // Switch state is stored in sharedPref
-                editor.putBoolean("switchChecked",true)
-                var localCounter = 0
-                // Saving added default types to sharedPref and local list.
                 // takeLast should be equal to the number of items added.
-                paymentTypeList.takeLast(5).forEach {
-                    // Local id list of default types.
-                    defaultTypeIdList.add(it.id)
-                    // Shared pref id list of default types.
-                    editor.putInt("defId$localCounter", it.id)
-                    editor.apply()
-                    localCounter++
-                }
+                defaultTypeIdList = paymentTypeLogic.writeToSharedPreferences(editor,paymentTypeList,initTypeCount)
             }else{
-                val pref = getSharedPreferences(packageName, MODE_PRIVATE)
-                val editor = pref.edit()
-                // Switch state is changed in shared pref
-                editor.putBoolean("switchChecked",false)
-                // No more input to sharedpref after this point.
-                editor.apply()
-                // Filling list again if app is closed after switching on.
-                if(defaultTypeIdList.isEmpty()){
-                    for(i in 0..3){
-                        defaultTypeIdList.add(pref.getInt("defId$i",0))
-                        Log.e("Logcat",pref.getInt("defId$i",0).toString())
-                    }
-                }
-                // Iterate over list and delete each type
-                defaultTypeIdList.forEach{
-//                    Log.e("Logcat",it.toString())
-                    PaymentTypeLogic.deleteType(this,it,false)
-                }
+                paymentTypeLogic.readFromSharedPreferencesAndDelete(this,editor,pref,initTypeCount)
                 // Empty local list after.
                 defaultTypeIdList = arrayListOf()
                 // View Update
@@ -159,32 +132,7 @@ class MainActivity : AppCompatActivity() {
 
     /** Func to Create Initial Types */
     private fun createInitTypes() {
-            val paymentType1 = PaymentTypeEntity().apply {
-                title = "Elektrik Faturası"
-                timeOfPeriod = 15
-                period = TypePeriods.Aylik
-            }
-            val paymentType2 = PaymentTypeEntity().apply {
-                title = "Su Faturası"
-                timeOfPeriod = 180
-                period = TypePeriods.Yillik
-            }
-            val paymentType3 = PaymentTypeEntity().apply {
-                title = "Doğalgaz Faturası"
-                period = TypePeriods.Haftalik
-            }
-            val paymentType5 = PaymentTypeEntity().apply {
-                title = "Mutfak Giderleri"
-                period = TypePeriods.Gunluk
-            }
-            val paymentType4 = PaymentTypeEntity().apply {
-                title = "İnternet Faturası"
-            }
-            PaymentTypeLogic.addPaymentType(this, paymentType1,false)
-            PaymentTypeLogic.addPaymentType(this, paymentType2,false)
-            PaymentTypeLogic.addPaymentType(this, paymentType3,false)
-            PaymentTypeLogic.addPaymentType(this, paymentType4,false)
-            PaymentTypeLogic.addPaymentType(this, paymentType5,false)
+            initTypeCount = paymentTypeLogic.createInitTypes(this)
     }
 
     override fun onResume() {
