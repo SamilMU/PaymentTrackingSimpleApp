@@ -5,7 +5,6 @@ import android.widget.Toast
 import com.example.paymenttracking.dal.PaymentOperation
 import com.example.paymenttracking.model.PaymentEntity
 import com.example.paymenttracking.model.PaymentTypeEntity
-import com.google.android.material.snackbar.Snackbar
 
 class PaymentLogic {
 
@@ -30,9 +29,9 @@ class PaymentLogic {
             val paymentOperation = PaymentOperation(context)
             return paymentOperation.getSpecificPayments(paymentTypeArg)
         }
-        fun getAllPayments(context: Context) : ArrayList<PaymentEntity>{
+/*        fun getAllPayments(context: Context) : ArrayList<PaymentEntity>{
             val paymentOperation = PaymentOperation(context)
             return paymentOperation.getAllPayments()
-        }
+        }*/
     }
 }

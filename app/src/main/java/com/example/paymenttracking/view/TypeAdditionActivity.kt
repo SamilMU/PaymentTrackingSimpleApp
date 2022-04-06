@@ -1,5 +1,6 @@
 package com.example.paymenttracking.view
 
+import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -8,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -231,6 +231,7 @@ class TypeAdditionActivity : AppCompatActivity() {
     }
 
     /** Warn user if input date is not suitable.*/
+    @SuppressLint("SetTextI18n")
     fun warningCheck() {
         binding.tvWarningAddtype.visibility = View.GONE
 

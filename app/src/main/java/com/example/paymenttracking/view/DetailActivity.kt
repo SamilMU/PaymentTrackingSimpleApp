@@ -1,5 +1,6 @@
 package com.example.paymenttracking.view
 
+import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -75,8 +76,14 @@ class DetailActivity : AppCompatActivity() {
         adb.setMessage("Seçilen ${paymentArg.date} tarihli ${paymentArg.amount} tutarındaki ödemeyi silmek istediğinize emin misiniz?")
 
         adb.setPositiveButton("Evet",DialogInterface.OnClickListener { _, _ ->
-            PaymentLogic.deletePayment(this,paymentArg.id)
+            val resultDB = PaymentLogic.deletePayment(this,paymentArg.id)
             setAdapter2RV()
+            if(resultDB){
+                Toast.makeText(this,"Seçilen ödeme başarıyla silindi", Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(this,"Ödemeyi silerken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz",
+                    Toast.LENGTH_SHORT).show()
+            }
         })
         adb.setNegativeButton("Hayır", DialogInterface.OnClickListener { _, _ ->
             Toast.makeText(this,"Silme iptal edildi", Toast.LENGTH_SHORT).show()
@@ -96,6 +103,7 @@ class DetailActivity : AppCompatActivity() {
     }
 
     /** View update */
+    @SuppressLint("SetTextI18n")
     override fun onResume() {
         binding.tvDetailTitle.text = paymentTypeObject.title.uppercase()
         if (paymentTypeObject.period != null){
